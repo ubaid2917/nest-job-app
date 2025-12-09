@@ -10,6 +10,7 @@ export class UserController {
 
     @Post()
     async create(@Body() createUserDto: CreateUserDto): Promise<any> {
-        return this.userService.create(createUserDto);
+         return await this.userService.register(createUserDto); 
+
     }
 }

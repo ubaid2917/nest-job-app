@@ -18,6 +18,7 @@ export class UserService {
         const salt = await bcrypt.genSalt();
         return bcrypt.hash(password, salt);
     }
+
     async register(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
         const isUserExist = await this.userRepository.findOne({ where: { email: createUserDto.email } });
 
@@ -29,7 +30,7 @@ export class UserService {
         const user = this.userRepository.create(createUserDto);
         const savedUser = await this.userRepository.save(user);
 
-        const { password, ...result } = savedUser; 
+        const { password, ...result } = savedUser;
         return result;
     }
 }

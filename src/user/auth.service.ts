@@ -13,6 +13,8 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from './constants/auth.constant';
+import { LoginResponse } from './constants/login.interface';
+
 
 @Injectable()
 export class AuthService {
@@ -40,35 +42,37 @@ export class AuthService {
     return result;
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<Omit<User, 'password'>> {
-    const isUserExist = await this.userRepository.findOne({
+  async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {
+    const user = await this.userRepository.findOne({
       where: { email: loginUserDto.email },
     });
 
-    if (!isUserExist) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordMatching = await comparePassword(
       loginUserDto.password,
-      isUserExist?.password,
+      user.password,
     );
 
     if (!isPasswordMatching) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const { password, ...result } = isUserExist;
 
-    const payload = { userId: isUserExist.id, email: isUserExist.email };
+    const { password, ...userData } = user;
+
+    const payload = { userId: user.id, email: user.email };
 
     const accessToken = await generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
 
-    const data = {
-      ...result,
-      accessToken,
-      refreshToken,
+    return {
+      user: userData,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
     };
-    return data;
   }
 }

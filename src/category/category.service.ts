@@ -24,8 +24,13 @@ export class CategoryService {
     return this.categoryRepository.save(category);
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    const categories = await this.categoryRepository.find();
+
+    return {
+      success: true,
+      data: categories,
+    };
   }
 
   findOne(id: number) {

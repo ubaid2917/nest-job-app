@@ -67,7 +67,16 @@ export class CategoryService {
     return updatedCategory;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+ async remove(id: string) {
+    const isExist = await this.categoryRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!isExist) {
+      throw new NotFoundException('Category not found');
+    }
+
+    await this.categoryRepository.delete(id);
+    return { message: 'Category deleted successfully' };
   }
 }

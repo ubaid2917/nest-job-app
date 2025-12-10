@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -37,18 +41,30 @@ export class CategoryService {
     return PaginationUtil.paginate(this.categoryRepository, page, limit, where);
   }
 
- async findOne(id: string) {
+  async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: { id: id },
-    });   
-    
+    });
+
     return {
       data: category,
     };
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    const isExist = await this.categoryRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!isExist) {
+      throw new NotFoundException('Category not found');
+    }
+
+    await this.categoryRepository.update(id, updateCategoryDto);
+    const updatedCategory = await this.categoryRepository.findOne({
+      where: { id: id },
+    });
+    return updatedCategory;
   }
 
   remove(id: number) {

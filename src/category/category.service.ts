@@ -3,7 +3,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
-import { Repository } from 'typeorm';
+import { ILike, Like, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoryService {
@@ -24,8 +24,10 @@ export class CategoryService {
     return this.categoryRepository.save(category);
   }
 
-  async findAll() {
-    const categories = await this.categoryRepository.find();
+  async findAll(search?: string) {
+    const categories = await this.categoryRepository.find({
+      where: search ? { name: ILike(`%${search}%`) } : {},
+    });
 
     return {
       success: true,
@@ -33,8 +35,11 @@ export class CategoryService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  findOne(id: string ) {
+     const category = this.categoryRepository.findOne({
+      where: { id: id },
+    });
+    return category;
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {

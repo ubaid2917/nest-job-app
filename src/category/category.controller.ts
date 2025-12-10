@@ -1,12 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { CommonQueryDto } from '../common/dto/common-query.dto'; 
+import { CommonQueryDto } from '../common/dto/common-query.dto';
 import { PaginationUtil } from '../utils/pagination.utils';
-import { PaginatedResponse } from '../common/interfaces/pagination.interface'; 
+import { PaginatedResponse } from '../common/interfaces/pagination.interface';
 import { Public } from '../auth/decorator/public.decorator';
-
 
 @Controller('category')
 export class CategoryController {
@@ -29,7 +37,10 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
     return this.categoryService.update(id, updateCategoryDto);
   }
 

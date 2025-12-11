@@ -15,6 +15,8 @@ import {
   generateRefreshToken,
 } from './constants/auth.constant';
 import { LoginResponse } from './constants/login.interface';
+import { verifyToken } from './constants/auth.constant';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +25,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
 
     @InjectRepository(Auth)
-    private readonly authRepository: Repository<Auth>,
+    private readonly authRepo: Repository<Auth>,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<{
@@ -51,14 +53,14 @@ export class AuthService {
     };
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<LoginResponse> { 
+  async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {
     const user = await this.userRepository.findOne({
       where: { email: loginUserDto.email },
     });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
-    }  
+    }
     const isPasswordMatching = await comparePassword(
       loginUserDto.password,
       user.password,
@@ -75,14 +77,14 @@ export class AuthService {
     const accessToken = await generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
 
-    const isRefreshTokenExist = await this.authRepository.findOne({
+    const isRefreshTokenExist = await this.authRepo.findOne({
       where: { userId: user.id },
     });
 
     if (isRefreshTokenExist) {
-      await this.authRepository.update({ userId: user.id }, { refreshToken });
+      await this.authRepo.update({ userId: user.id }, { refreshToken });
     } else {
-      await this.authRepository.save({
+      await this.authRepo.save({
         userId: user.id,
         refreshToken,
       });
@@ -93,6 +95,37 @@ export class AuthService {
       tokens: {
         accessToken,
         refreshToken,
+      },
+    };
+  }
+
+  async refreshToken(refreshToken: string): Promise<any> {
+    const decoded: any = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+    );
+
+    const auth = await this.authRepo.findOne({
+      where: { userId: decoded.userId },
+    });
+
+    if (!auth || auth.refreshToken !== refreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const payload = { userId: auth.id, email: decoded.email };
+
+    const newAccessToken = generateAccessToken({ ...payload });
+    const newRefreshToken = generateRefreshToken({ ...payload });
+
+    auth.refreshToken = newRefreshToken;
+    await this.authRepo.save(auth);
+
+    return {
+      message: 'Token refreshed successfully',
+      data: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       },
     };
   }

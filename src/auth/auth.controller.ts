@@ -7,19 +7,23 @@ import { Public } from './decorator/public.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly AuthService: AuthService) {} 
+  constructor(private readonly AuthService: AuthService) {}
 
   @Post('register')
   @Public()
   async create(@Body() registerUserDto: RegisterUserDto): Promise<any> {
     return await this.AuthService.register(registerUserDto);
   }
-  
+
   @Post('login')
   @Public()
   async login(@Body() loginUserDto: LoginUserDto) {
     return await this.AuthService.login(loginUserDto);
-  } 
+  }
 
-  
+  @Post('refresh-token')
+  @Public()
+  refreshToken(@Body('refreshToken') refreshToken: string) {
+    return this.AuthService.refreshToken(refreshToken);
+  }
 }

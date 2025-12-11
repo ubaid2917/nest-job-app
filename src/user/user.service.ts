@@ -3,7 +3,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import { CommonQueryDto } from '../common/dto/common-query.dto';
+import { PaginatedResponse } from 'src/common/interfaces/pagination.interface';
+import { PaginationUtil } from 'src/utils/pagination.utils';
+
 
 @Injectable()
 export class UserService {
@@ -12,13 +16,11 @@ export class UserService {
     private readonly userRepository: Repository<User>,
    ){}
 
-  findAll() { 
-     
-    const users = this.userRepository.find({
-      select:[]
-    });
-    
-    return users;
+  async findAll(queryDto: CommonQueryDto): Promise<PaginatedResponse<User>> {
+    const where = queryDto.search ? { name: ILike(`%${queryDto.search}%`) } : {};
+   
+    return PaginationUtil.paginate(this.userRepository, queryDto.page, queryDto.limit, where);   
+   
   }
 
   findOne(id: number) {

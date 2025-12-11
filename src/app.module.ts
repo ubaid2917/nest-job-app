@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { UserModule } from './user/user.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { UserModule } from './user/user.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     AuthModule,
     UserModule,

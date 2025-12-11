@@ -4,7 +4,7 @@ import { AllExceptionsFilter } from './common/exceptions/error.exceptions';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { AuthGuard } from './auth/guard/auth.guard';
-import { Reflector } from '@nestjs/core'; 
+import { Reflector } from '@nestjs/core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +12,6 @@ async function bootstrap() {
   // global guard
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new AuthGuard(reflector));
-
 
   // global validation pipe
   app.useGlobalPipes(

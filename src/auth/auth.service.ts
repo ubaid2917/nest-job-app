@@ -51,15 +51,14 @@ export class AuthService {
     };
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {
+  async login(loginUserDto: LoginUserDto): Promise<LoginResponse> { 
     const user = await this.userRepository.findOne({
       where: { email: loginUserDto.email },
     });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
-    }
-
+    }  
     const isPasswordMatching = await comparePassword(
       loginUserDto.password,
       user.password,

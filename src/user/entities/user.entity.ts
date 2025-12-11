@@ -17,5 +17,14 @@ export class User extends BaseEntity {
     enum: Role,
     default: Role.CANDIDATE,
   })
-  role: Role;
+  role: Role; 
+
+  @Column()
+  phone: string;
+
+  @Column({ nullable: true })
+  profileImage: string;
+
+  @Column({ nullable: true })
+  resumeUrl: string;
 }

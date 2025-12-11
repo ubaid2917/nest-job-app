@@ -23,9 +23,11 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async register(
-    registerUserDto: RegisterUserDto,
-  ): Promise<Omit<User, 'password'>> {
+  async register(registerUserDto: RegisterUserDto): Promise<{
+    success: boolean;
+    message: string;
+    user: Omit<User, 'password'>;
+  }> {
     const isUserExist = await this.userRepository.findOne({
       where: { email: registerUserDto.email },
     });
@@ -39,7 +41,11 @@ export class AuthService {
     const savedUser = await this.userRepository.save(user);
 
     const { password, ...result } = savedUser;
-    return result;
+    return {
+      success: true,
+      message: 'User registered successfully',
+      user: result,
+    };
   }
 
   async login(loginUserDto: LoginUserDto): Promise<LoginResponse> {
@@ -74,5 +80,5 @@ export class AuthService {
         refreshToken,
       },
     };
-  }   
+  }
 }

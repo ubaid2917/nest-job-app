@@ -1,8 +1,7 @@
-import { IsString, IsEmail, IsNotEmpty, IsDefined } from 'class-validator'; 
-import { Role } from '../enums/role.enum';
+import { IsString, IsEmail, IsNotEmpty, IsDefined } from 'class-validator';
+import { Role } from '../../user/enums/role.enum';
 
 export class LoginUserDto {
-  
   @IsDefined({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })
   @IsNotEmpty({ message: 'Email cannot be empty' })
@@ -12,5 +11,4 @@ export class LoginUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Password cannot be empty' })
   password: string;
-
 }

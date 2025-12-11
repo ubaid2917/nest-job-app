@@ -1,5 +1,5 @@
-import { IsString, IsEmail, IsNotEmpty, IsDefined } from 'class-validator'; 
-import { Role } from '../enums/role.enum';
+import { IsString, IsEmail, IsNotEmpty, IsDefined } from 'class-validator';
+import { Role } from '../../user/enums/role.enum';
 
 export class RegisterUserDto {
   @IsDefined({ message: 'Name is required' })

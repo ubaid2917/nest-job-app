@@ -72,7 +72,7 @@ export class AuthService {
 
     const { password, ...userData } = user;
 
-    const payload = { userId: user.id, email: user.email };
+    const payload = { id: user.id, email: user.email, role: user.role };
 
     const accessToken = await generateAccessToken(payload);
     const refreshToken = await generateRefreshToken(payload);
@@ -113,7 +113,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const payload = { userId: auth.id, email: decoded.email };
+    const payload = { id: auth.id, email: decoded.email, role: decoded.role };
 
     const newAccessToken = generateAccessToken({ ...payload });
     const newRefreshToken = generateRefreshToken({ ...payload });

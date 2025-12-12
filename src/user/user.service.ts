@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -46,11 +46,16 @@ export class UserService {
     return { data: null };
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+      const isExist = await this.userRepository.findOne({
+        where: { id: id },
+      });
+    
+        if (!isExist) {
+          throw new NotFoundException('Category not found');
+        }
+    
+        await this.userRepository.delete(id);
+        return { message: 'Category deleted successfully' };
   }
 }

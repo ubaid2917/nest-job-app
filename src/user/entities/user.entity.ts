@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Role } from '../enums/role.enum';
 import { BaseEntity } from '../../common/entity/base.entity';
+import { UserEducation } from './user-education.entity';
 @Entity()
 export class User extends BaseEntity {
   @Column()
@@ -26,5 +27,8 @@ export class User extends BaseEntity {
   profileImage: string;
 
   @Column({ nullable: true })
-  resumeUrl: string;
+  resumeUrl: string;  
+
+  @OneToMany(() => UserEducation, (education) => education.user)
+  educations: UserEducation[];
 }

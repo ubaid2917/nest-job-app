@@ -1,18 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { ILike, Repository } from 'typeorm';
 import { CommonQueryDto } from '../common/dto/common-query.dto';
 import { PaginatedResponse } from 'src/common/interfaces/pagination.interface';
 import { PaginationUtil } from 'src/utils/pagination.utils';
+import { UserEducation } from './entities/user-education.entity';
+import { CreateEducationDto } from './dto/create-user-education';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,  
+
+    @InjectRepository(UserEducation)
+    private readonly userEducationRepo: Repository<UserEducation>,
   ) {}
 
   async findAll(queryDto: CommonQueryDto): Promise<PaginatedResponse<User>> {
@@ -47,14 +50,19 @@ export class UserService {
   }
 
   async remove(id: string) {
-      const isExist = await this.userRepository.findOne({
-        where: { id: id },
-      });
-        if (!isExist) {
-          throw new NotFoundException('Category not found');
-        }
-    
-        await this.userRepository.delete(id);
-        return { message: 'Category deleted successfully' };
+    const isExist = await this.userRepository.findOne({
+      where: { id: id },
+    });
+    if (!isExist) {
+      throw new NotFoundException('Category not found');
+    }
+
+    await this.userRepository.delete(id);
+    return { message: 'Category deleted successfully' };
+  }  
+
+  async createEducation(createEducationDto: CreateEducationDto) : Promise<UserEducation> {
+    const education = this.userEducationRepo.save(createEducationDto);
+    return education;
   }
 }

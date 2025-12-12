@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto'; 
+import { CreateEducationDto } from './dto/create-user-education';
 import { CommonQueryDto } from '../common/dto/common-query.dto';
 
 
@@ -11,9 +10,7 @@ export class UserController {
 
   @Get('list')
   findAll(@Query() query: CommonQueryDto) {
-    const data = this.userService.findAll(query); 
-
-    return data;
+    return this.userService.findAll(query);
   }
 
   @Get(':id')
@@ -21,9 +18,13 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
+  }  
+
+  @Post('education')
+  create(@Body() createEducationDto: CreateEducationDto) {
+    return this.userService.createEducation(createEducationDto);
   }
 }

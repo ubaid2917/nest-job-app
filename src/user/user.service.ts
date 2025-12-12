@@ -176,4 +176,11 @@ export class UserService {
 
     return skill;
   }
+
+  async getAllSkills(queryDto: CommonQueryDto, user: any): Promise<UserSkill[]> {
+    const skills = await this.userSkillRepo.find({
+      where: { user: { id: user.id } },
+    });
+    return skills;
+  }
 }

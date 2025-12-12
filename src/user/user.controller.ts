@@ -73,16 +73,18 @@ export class UserController {
 
   // skills
   @Post('skill/create')
-  async createSkill(
-    @Body() createSkillDto: CreateSkillsDto[],
-    @Request() req,
-  ) {
+  async createSkill(@Body() createSkillDto: CreateSkillsDto[], @Request() req) {
     const userId = req.user.id;
     const data = await this.userService.createSkills(createSkillDto, userId);
     return {
       data,
     };
-  }   
+  }
 
-
+  @Get('skill/list')
+  async findAllSkill(@Query() query: CommonQueryDto, @Request() req) {
+    const user = req.user;
+    const data = await this.userService.getAllSkills(query, user); 
+    return {data}
+  }
 }

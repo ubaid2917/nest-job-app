@@ -47,5 +47,22 @@ export class UserController {
     const user = req.user; 
     console.log('userId', req.user)
     return this.userService.findAllEducations(query, user);
+  }  
+
+
+  @Get('education/:id/detail')
+  async findOneEducation(@Param('id') id: string) {
+    const data = await this.userService.findOneEducation(id);
+    return {data}
+  }   
+
+  @Patch('education/:id/update')
+  async updateEducation(@Param('id') id: string, @Body() updateEducationDto: CreateEducationDto) {
+    return  this.userService.updateEducation(id, updateEducationDto);
+  }
+
+  @Delete('education/:id/delete')
+  async removeEducation(@Param('id') id: string) {
+    return this.userService.removeEducation(id);
   }
 }

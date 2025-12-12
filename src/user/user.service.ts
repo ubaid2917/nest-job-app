@@ -120,5 +120,37 @@ export class UserService {
       limit: take,
       totalPages: Math.ceil(total / take),
     };
+  }  
+
+  async findOneEducation(id: string) {
+     return this.userEducationRepo.findOne({
+       where: { id: id },
+     })
+  }   
+
+  async updateEducation(id: string, updateEducationDto: any) { 
+     
+    const isExist = await this.userEducationRepo.findOne({
+       where: { id: id },
+     });
+ 
+     if (!isExist) {
+       throw new NotFoundException('Education not found');
+     }
+
+     return this.userEducationRepo.update(id, updateEducationDto);
+  }   
+
+  async removeEducation(id: string) {
+     const isExist = await this.userEducationRepo.findOne({
+       where: { id: id },
+     });
+ 
+     if (!isExist) {
+       throw new NotFoundException('Education not found');
+     }
+
+     await this.userEducationRepo.delete(id);
+     return { message: 'Education deleted successfully' };
   }
 }

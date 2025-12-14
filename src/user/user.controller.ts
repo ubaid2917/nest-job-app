@@ -75,8 +75,7 @@ export class UserController {
   // skills
   @Post('skill/create')
   async createSkill(@Body() createSkillDto: CreateSkillsDto[], @Request() req) {
-    const userId = req.user.id;
-    const data = await this.userService.createSkills(createSkillDto, userId);
+    const data = await this.userService.createSkills(createSkillDto, req.user.id);
     return {
       data,
     };
